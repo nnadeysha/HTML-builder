@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { basename } = require("path/posix");
 
 /**
  * @typedef IFileInfo
@@ -19,13 +20,16 @@ function readFiles(folder, callback) {
     files.forEach((file) => {
       if (file.isDirectory() == false) {
         fs.stat(path.join(folder, file.name), (err, stats) => {
+          let ext = path.extname(file.name);
           let kbSize = stats.size / 2 ** 10;
-          //console.log(kbSize  + file.name);
+          let bName = basename(file.name, ext)
+          console.log(  bName + '  -  '+ ext.slice(1)+'  -  '+ kbSize + 'kb' );
+          /* 
           arr.push(true);
-          result.push({ size: kbSize, name: file.name });
+          result.push({ size: kbSize, name: file.name, ext: ext });
           if (arr.length == files.length) {
             callback(result);
-          }
+          } */
         });
       } else {
         readFiles(path.join(folder, file.name), (res) => {
@@ -42,4 +46,4 @@ function readFiles(folder, callback) {
 readFiles(path.join(__dirname, "secret-folder"), (res) => {
   console.log(res);
 });
-//console.log(path.extname(file.name))
+
