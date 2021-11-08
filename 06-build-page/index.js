@@ -35,7 +35,7 @@ fs.readdir(srcStyle, { withFileTypes: true }, (err, files) => {
   });
 });
 
-fs.mkdir(path.join(__dirname, "project-dist"), { recursive: true }, (err) => {
+fs.mkdir(path.join(__dirname, "project-dist"), {force: true, recursive: true }, (err) => {
   if (err) throw err;
 });
 
@@ -59,8 +59,7 @@ tempFile.on("data", async (data) => {
     return html;
 
   }
-});
-fs.access(destAsset, function (error) {
+});fs.access(destAsset, function (error) {
   if (error) {
     console.log('The file is ready for viewing')
     copyAssets();
@@ -76,8 +75,8 @@ function copyAssets() {
 }
 
 async function changeAndDelete() {
-  await fs.promises.rm(destAsset, { recursive: true });
-  await fs.promises.mkdir(destAsset, { recursive: true });
+  await fs.promises.rm(destAsset, {force: true, recursive: true });
+  await fs.promises.mkdir(destAsset, {force: true, recursive: true });
   copyFiles(srcAsset, destAsset);
 }
 function copyFiles(src, dest) {
@@ -90,7 +89,7 @@ function copyFiles(src, dest) {
         const pathOfSrc = path.join(src, name);
         const pathOfDest = path.join(dest, name);
         if (file.isDirectory()) {
-          fs.promises.mkdir(pathOfDest, { recursive: true });
+          fs.promises.mkdir(pathOfDest, {force: true, recursive: true });
           copyFiles(pathOfSrc, pathOfDest);
         } else if (file.isFile()) {
           fs.promises.copyFile(pathOfSrc, pathOfDest).catch(function (error) {
