@@ -31,7 +31,7 @@ function readFiles(folder, callback) {
             callback(result);
           } */
         });
-      } else {
+      } /* else {
         readFiles(path.join(folder, file.name), (res) => {
           result = [...result, ...res];
           arr.push(true);
@@ -39,7 +39,7 @@ function readFiles(folder, callback) {
             callback(result);
           }
         });
-      }
+      } */
     });
   });
 }
