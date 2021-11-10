@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { basename } = require('path/posix');
+const { basename } = require('path');
 
 /**
  * @typedef IFileInfo
