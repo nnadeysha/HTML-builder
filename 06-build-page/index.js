@@ -35,7 +35,7 @@ fs.readdir(srcStyle, { withFileTypes: true }, (err, files) => {
   });
 });
 
-fs.mkdir(path.join(__dirname, "project-dist"), {force: true, recursive: true }, (err) => {
+fs.mkdir(path.join(__dirname, "project-dist"), { recursive: true }, (err) => {
   if (err) throw err;
 });
 
@@ -45,7 +45,7 @@ tempFile.on("data", async (data) => {
 
   async function htmlBuild() {
     let html = data.toString();
-    const tags = html.match(/{{(.*)}}/gi);
+    const tags = html.match(/{{[a-zA-Z]*}}/gi);
 
     for (let item of tags) {
       const tagName = item.substr(2, item.length - 4);
@@ -69,14 +69,14 @@ tempFile.on("data", async (data) => {
 });
 
 function copyAssets() {
-  fs.promises.mkdir(destAsset);
+  fs.promises.mkdir(destAsset, { recursive: true });
   copyFiles(srcAsset, destAsset);
   
 }
 
 async function changeAndDelete() {
-  await fs.promises.rm(destAsset, {force: true, recursive: true });
-  await fs.promises.mkdir(destAsset, {force: true, recursive: true });
+  await fs.promises.rmdir(destAsset, { recursive: true });
+  await fs.promises.mkdir(destAsset, { recursive: true });
   copyFiles(srcAsset, destAsset);
 }
 function copyFiles(src, dest) {
@@ -89,7 +89,7 @@ function copyFiles(src, dest) {
         const pathOfSrc = path.join(src, name);
         const pathOfDest = path.join(dest, name);
         if (file.isDirectory()) {
-          fs.promises.mkdir(pathOfDest, {force: true, recursive: true });
+          fs.promises.mkdir(pathOfDest, { recursive: true });
           copyFiles(pathOfSrc, pathOfDest);
         } else if (file.isFile()) {
           fs.promises.copyFile(pathOfSrc, pathOfDest).catch(function (error) {
