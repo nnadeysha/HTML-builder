@@ -8,32 +8,6 @@ const srcAsset = path.join(__dirname, "assets");
 const tempFile = fs.createReadStream(path.join(__dirname, "template.html"),"utf-8");
 const indFile = fs.createWriteStream(path.join(__dirname, "project-dist", "index.html"));
 
-let arr = [];
-
-fs.readdir(srcStyle, { withFileTypes: true }, (err, files) => {
-  if (err) {
-    console.log(err);
-  }
-  files.forEach((file) => {
-    let ext = path.extname(file.name).toString();
-    const name = file.name.toString();
-    if (file.isFile()) {
-      if (ext.slice(1) == "css") {
-        fs.readFile(
-          path.join(__dirname, "styles", name),
-          "utf-8",
-          (err, data) => {
-            if (err) {
-            } else {
-              arr.push(data.toString());
-              streamStyle.write(arr.join(""));
-            }
-          }
-        );
-      }
-    }
-  });
-});
 
 fs.mkdir(path.join(__dirname, "project-dist"), { recursive: true }, (err) => {
   if (err) throw err;
@@ -59,7 +33,39 @@ tempFile.on("data", async (data) => {
     return html;
 
   }
-});fs.access(destAsset, function (error) {
+});
+
+
+fs.readdir(srcStyle, { withFileTypes: true }, (err, files) => {
+  if (err) {
+    console.log(err);
+  }
+  files.forEach((file) => {
+    let ext = path.extname(file.name).toString().split(".")[1];
+    const name = file.name.toString();
+    if (file.isFile()) {
+      if ( ext == "css") {
+        fs.readFile(
+          path.join(__dirname, "styles", name),
+          "utf-8",
+          (err, data) => {
+            if (err) throw err;
+            let arr = [];
+            const st = data.toString()
+              arr.push(st);
+              //streamStyle.write(arr);
+
+              for (let i = 0; i < arr.length; i++) {
+                streamStyle.write(arr[i]);
+              }
+            
+          }
+        );
+      }
+    }
+  });
+});
+fs.access(destAsset, function (error) {
   if (error) {
     console.log('The file is ready for viewing')
     copyAssets();
@@ -68,6 +74,9 @@ tempFile.on("data", async (data) => {
   }
 });
 
+
+
+
 function copyAssets() {
   fs.promises.mkdir(destAsset, { recursive: true });
   copyFiles(srcAsset, destAsset);
@@ -75,7 +84,7 @@ function copyAssets() {
 }
 
 async function changeAndDelete() {
-  await fs.promises.rmdir(destAsset, { recursive: true });
+  await fs.promises.rm(destAsset, { recursive: true });
   await fs.promises.mkdir(destAsset, { recursive: true });
   copyFiles(srcAsset, destAsset);
 }
