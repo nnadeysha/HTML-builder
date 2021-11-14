@@ -35,7 +35,7 @@ tempFile.on("data", async (data) => {
   }
 });
 
-
+let arr = [];
 fs.readdir(srcStyle, { withFileTypes: true }, (err, files) => {
   if (err) {
     console.log(err);
@@ -50,14 +50,12 @@ fs.readdir(srcStyle, { withFileTypes: true }, (err, files) => {
           "utf-8",
           (err, data) => {
             if (err) throw err;
-            let arr = [];
-            const st = data.toString()
-              arr.push(st);
-              //streamStyle.write(arr);
+            
+            
+              arr.push(data.toString());
+              streamStyle.write(arr);
 
-              for (let i = 0; i < arr.length; i++) {
-                streamStyle.write(arr[i]);
-              }
+              
             
           }
         );
